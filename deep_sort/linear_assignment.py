@@ -44,6 +44,7 @@ def min_cost_matching(
         * A list of unmatched detection indices.
 
     """
+    
     if track_indices is None:
         track_indices = np.arange(len(tracks))
     if detection_indices is None:
@@ -75,6 +76,7 @@ def min_cost_matching(
     return matches, unmatched_tracks, unmatched_detections
 
 
+
 def matching_cascade(
         distance_metric, max_distance, cascade_depth, tracks, detections,
         track_indices=None, detection_indices=None):
@@ -92,7 +94,7 @@ def matching_cascade(
         Gating threshold. Associations with cost larger than this value are
         disregarded.
     cascade_depth: int
-        The cascade depth, should be se to the maximum track age.
+        The cascade depth, should be set to the maximum track age.
     tracks : List[track.Track]
         A list of predicted tracks at the current time step.
     detections : List[detection.Detection]
@@ -114,6 +116,7 @@ def matching_cascade(
         * A list of unmatched detection indices.
 
     """
+    
     if track_indices is None:
         track_indices = list(range(len(tracks)))
     if detection_indices is None:
