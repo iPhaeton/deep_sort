@@ -128,7 +128,7 @@ def create_detections(detection_mat, frame_idx, min_height=0):
 
 def run(sequence_dir, detection_file, output_file, min_confidence,
         nms_max_overlap, min_detection_height, max_cosine_distance,
-        nn_budget, display):
+        nn_budget, display, max_age):
     """Run multi-target tracker on a particular sequence.
 
     Parameters
@@ -160,7 +160,7 @@ def run(sequence_dir, detection_file, output_file, min_confidence,
     seq_info = gather_sequence_info(sequence_dir, detection_file)
     metric = nn_matching.NearestNeighborDistanceMetric(
         "cosine", max_cosine_distance, nn_budget)
-    tracker = Tracker(metric)
+    tracker = Tracker(metric, max_age=max_age)
     results = []
 
     def frame_callback(vis, frame_idx):
@@ -246,6 +246,9 @@ def parse_args():
     parser.add_argument(
         "--display", help="Show intermediate tracking results",
         default=True, type=bool)
+    parser.add_argument(
+        "--max_age", help="Maximum number of missed misses before a track is deleted",
+        default=30, type=int)
     return parser.parse_args()
 
 
@@ -254,4 +257,4 @@ if __name__ == "__main__":
     run(
         args.sequence_dir, args.detection_file, args.output_file,
         args.min_confidence, args.nms_max_overlap, args.min_detection_height,
-        args.max_cosine_distance, args.nn_budget, args.display)
+        args.max_cosine_distance, args.nn_budget, args.display, args.max_age)
