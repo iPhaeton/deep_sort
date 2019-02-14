@@ -190,6 +190,22 @@ def parse_args():
         default="resources/networks/mars-small128.pb")
     return parser.parse_args()
 
+def create_graph(session):
+    input_var = tf.placeholder(tf.uint8, (None, 128, 64, 3), name="images")
+    image_var = tf.map_fn(
+        lambda x: _preprocess(x), tf.cast(input_var, tf.float32),
+        back_prop=False
+    )
+
+    tf.summary.image('image_var', image_var)
+
+    factory_fn = _network_factory()
+    features, _ = factory_fn(image_var, reuse=None)
+    features = tf.identity(features, name="features")
+
+    tf.summary.histogram('features', features)
+    
+    return input_var, features
 
 def main():
     args = parse_args()
