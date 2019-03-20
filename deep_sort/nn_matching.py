@@ -92,7 +92,7 @@ def _nn_cosine_distance(x, y):
         smallest cosine distance to a sample in `x`.
 
     """
-    distances = _cosine_distance(x, y)
+    distances = _cosine_distance(np.array(x).mean(axis=0, keepdims=True), y)
     return distances.min(axis=0)
 
 
