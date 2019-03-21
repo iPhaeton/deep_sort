@@ -5,6 +5,9 @@ import argparse
 import numpy as np
 import cv2
 import tensorflow as tf
+import importlib
+import tensorflow.contrib.slim as slim
+from freeze_model import create_graph
 import re
 
 def _run_in_batches(f, data_dict, out, batch_size):
@@ -77,14 +80,14 @@ class ImageEncoder(object):
         if re.compile('\.pb$').search(checkpoint_filename):
             self.load_pb(checkpoint_filename)
         elif re.compile('\.ckpt$').search(checkpoint_filename):
-            self.load_ckpt()
+            self.load_ckpt(checkpoint_filename)
         else:
             raise Exception('[ImageEncoder] Unknown model format.')
         
         self.input_var = tf.get_default_graph().get_tensor_by_name(
-            "net/%s:0" % input_name)
+            "%s:0" % input_name)
         self.output_var = tf.get_default_graph().get_tensor_by_name(
-            "net/%s:0" % output_name)
+            "%s:0" % output_name)
 
         assert len(self.output_var.get_shape()) == 2
         assert len(self.input_var.get_shape()) == 4
@@ -102,10 +105,13 @@ class ImageEncoder(object):
         with tf.gfile.GFile(checkpoint_filename, "rb") as file_handle:
             graph_def = tf.GraphDef()
             graph_def.ParseFromString(file_handle.read())
-        tf.import_graph_def(graph_def, name="net")
+        tf.import_graph_def(graph_def, name='')
 
-    def load_ckpt(self):
-        pass
+    def load_ckpt(self, checkpoint_filename):
+        inputs, outputs = create_graph(self.session)
+        
+        saver = tf.train.Saver(slim.get_variables_to_restore())
+        saver.restore(self.session, checkpoint_filename)
 
 
 def create_box_encoder(model_filename, input_name="images",
