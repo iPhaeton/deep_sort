@@ -1,6 +1,6 @@
 python2 deep_sort_app.py \
     --sequence_dir=./resources/sequences/intersection_test/ \
-    --detection_file=./resources/detections/sequences/intersection_test_1.npy  \
+    --detection_file=./resources/detections/sequences/intersection_test_hard.npy  \
     --min_confidence=0 \
     --nn_budget=10 \
     --display=True \
